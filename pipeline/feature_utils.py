@@ -18,8 +18,8 @@ CANON_KEYS = [
 ]
 
 def _duration_to_days(text):
-    """ crude converter: '3 weeks'→21, '2 days'→2, else 0 """
-    if text is None: return 0
+    """Crude converter: '3 weeks'→21, '2 days'→2, else 0"""
+    if not isinstance(text, str): return 0
     m = re.search(r"(\d+)\s*(day|week|month|year)", text)
     if not m: return 0
     n = int(m.group(1)); unit = m.group(2)
