@@ -7,7 +7,7 @@ import json, torch, argparse
 from transformers import AutoTokenizer, AutoModel
 from pipeline.feature_utils import transform
 from sklearn.preprocessing import LabelEncoder
-from pipeline.04_train_hybrid import SymptomNetHybrid, ENCODER_NAME
+from pipeline.train_hybrid2 import SymptomNetHybrid, ENCODER_NAME
 
 def load_model():
     lbl_enc = torch.load("models/label_encoder.pt")
