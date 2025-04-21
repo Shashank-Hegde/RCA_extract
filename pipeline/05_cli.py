@@ -2,6 +2,10 @@
 """
 Predict + list which CANON keys are still null → ask these as follow‑ups.
 """
+
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import yaml, torch, argparse, json
 from transformers import AutoModel, AutoTokenizer
 CANON_KEYS = [
