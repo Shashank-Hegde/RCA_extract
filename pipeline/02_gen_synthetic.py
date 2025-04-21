@@ -89,7 +89,7 @@ def main(n, onto, out_dir):
 
 if __name__ == "__main__":
     a = argparse.ArgumentParser()
-    a.add_argument("--n", type=int, default=50000)
+    a.add_argument("--n", type=int, default=500)
     a.add_argument("--onto", default="ontology/v1.yaml")
-    a.add_argument("--out", default="data/synth")
+    a.add_argument("--out_dir", default="data/synth")
     main(**vars(a.parse_args()))
