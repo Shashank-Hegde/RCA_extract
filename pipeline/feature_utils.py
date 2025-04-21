@@ -31,31 +31,35 @@ def extracted_to_dict(extracted):
         v = extracted.get(k)
 
         # numeric age
-        if k == "age" and v is not None: d["age"] = float(v)
+        if k == "age" and v is not None:
+            try: d["age"] = float(v)
+            except: pass
 
         # booleans
-        elif k == "clean_water": d["clean_water"] = 1.0 if v else 0.0
+        elif k == "clean_water":
+            d["clean_water"] = 1.0 if v else 0.0
 
-        # categorical (one‑hot via DictVectorizer)
-        elif k in ("sex","location","region","occupation"):
+        # categorical (one-hot via DictVectorizer)
+        elif k in ("sex", "location", "region", "occupation"):
             if v: d[f"{k}={v}"] = 1.0
 
-        # symptoms
+        # symptom duration
         elif k == "symptom_duration_map":
             if isinstance(v, dict):
                 for sym, dur in v.items():
-                    d[f"duration__{sym}"] = _duration_to_days(dur)
+                    d[f"dura_{sym}"] = _duration_to_days(dur)
             elif isinstance(v, str):
-                d["duration__freeform"] = _duration_to_days(v)
+                d["dura_freeform"] = _duration_to_days(v)
 
+        # symptom intensity
         elif k == "symptom_intensity_map":
             if isinstance(v, dict):
                 for sym, inten in v.items():
                     d[f"inten_{sym}={inten.lower()}"] = 1.0
             elif isinstance(v, str):
-                d["inten__freeform"] = 1.0
+                d[f"inten_freeform={v.lower()}"] = 1.0
 
-        # free‑text categorical
+        # free-text fallback
         else:
             if v:
                 d[f"{k}={str(v).lower()[:30]}"] = 1.0
