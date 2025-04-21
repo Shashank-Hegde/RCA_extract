@@ -68,6 +68,7 @@ def main(train_jsonl, val_jsonl, out_dir="models/extractor_ner"):
 
 if __name__ == "__main__":
     a = argparse.ArgumentParser()
-    a.add_argument("--train", required=True)
-    a.add_argument("--val", required=True)
+    a.add_argument("--train_jsonl", required=True)
+    a.add_argument("--val_jsonl", required=True)
+
     main(**vars(a.parse_args()))
