@@ -6,6 +6,9 @@ Example call:
   python pipeline/06_json_predict.py \\
          --json '{"text":"irrelevant","extracted":{...}}'
 """
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import json, argparse, yaml, torch
 from transformers import AutoModel, AutoTokenizer
 from symptom_net.constants import CANON_KEYS      # single list file
