@@ -55,16 +55,27 @@ def main(train_jsonl, val_jsonl, out_dir="models/extractor_ner"):
     cfg = (pathlib.Path(out_dir) / "config.cfg")
     cfg.parent.mkdir(parents=True, exist_ok=True)
     
-    cfg.write_text(
-    "[nlp]\nlang = \"en\"\npipeline = [\"tok2vec\",\"ner\"]\n"
-    "[components.ner]\nfactory = \"ner\"\n"
-    "[components.tok2vec]\nfactory = \"tok2vec\"\n"
-    "[components.tok2vec.model]\n@architectures = \"spacy.Tok2VecTransformer.v3\"\nname = \"roberta-base\"\n"
-    "[paths]\ntrain = \"train.spacy\"\ndev = \"val.spacy\"\n"
-)
+    cfg.write_text("""
+[nlp]
+lang = "en"
+pipeline = ["tok2vec", "ner"]
 
+[components]
 
-    
+[components.tok2vec]
+factory = "tok2vec"
+
+[components.tok2vec.model]
+@architectures = "spacy.Tok2VecTransformer.v3"
+name = "roberta-base"
+
+[components.ner]
+factory = "ner"
+
+[paths]
+train = "train.spacy"
+dev = "val.spacy"
+""".strip())
     
     subprocess.run([
     "python","-m","spacy","train", str(cfg),
