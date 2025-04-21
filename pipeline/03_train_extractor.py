@@ -13,7 +13,15 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import json, spacy, argparse, pathlib
 from spacy.tokens import DocBin
-from symptom_net.constants import CANON_KEYS     # short helper file
+CANON_KEYS = [
+    "age", "sex", "ethnicity", "socioeconomic_status", "location", "region",
+    "past_conditions", "surgeries", "hospitalisations", "chronic_illnesses",
+    "medication_history", "immunisation_status", "allergies", "family_history",
+    "diet", "physical_activity", "sleep_pattern", "alcohol", "tobacco",
+    "mental_health", "work_stress", "environmental_exposure", "housing", "clean_water",
+    "occupation", "symptom_duration_map", "symptom_intensity_map"
+]
+
 
 LABELS = [k.upper() for k in CANON_KEYS if k not in
           ("symptom_duration_map","symptom_intensity_map")]
