@@ -45,16 +45,18 @@ def extract(text, nlp):
 
 # ------------------ Risk / leaf classifier ------------------
 class SymptomNet(torch.nn.Module):
-    def __init__(self, encoder, hidden=128, n_out=20):
+    def __init__(self, encoder, n_labels, hidden=128):
         super().__init__()
         self.encoder = encoder
-        self.fc = torch.nn.Linear(encoder.config.hidden_size, hidden)
-        self.out = torch.nn.Linear(hidden, n_out)
+        self.fc1 = torch.nn.Linear(encoder.config.hidden_size, hidden)
+        self.fc_leaf = torch.nn.Linear(hidden, n_labels)
+        self.fc_risk = torch.nn.Linear(hidden, 1)
 
     def forward(self, input_ids, attention_mask):
-        enc = self.encoder(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state[:, 0]
-        x = torch.relu(self.fc(enc))
-        return torch.sigmoid(self.out(x))
+        x = self.encoder(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state[:, 0]
+        x = torch.relu(self.fc1(x))
+        return self.fc_leaf(x), torch.sigmoid(self.fc_risk(x))
+
 
 def predict_leaf(text, model_path):
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
