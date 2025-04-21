@@ -15,11 +15,6 @@ from spacy.tokens import DocBin
 
 from sklearn.preprocessing import LabelEncoder
 
-# Load label encoder
-label_encoder = torch.load("models/label_encoder.pt")
-n_labels = len(label_encoder.classes_)
-model = SymptomNet(encoder, n_labels)
-
 warnings.filterwarnings("ignore")
 
 CANON_KEYS = [
@@ -68,17 +63,20 @@ class SymptomNet(torch.nn.Module):
 def predict_leaf(text, model_path):
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
     encoder = AutoModel.from_pretrained("distilbert-base-uncased")
-    model = SymptomNet(encoder, n_labels=20)  # ← use same label count as training
+    label_encoder = torch.load("models/label_encoder.pt")
+    n_labels = len(label_encoder.classes_)
+
+    model = SymptomNet(encoder, n_labels)
     model.load_state_dict(torch.load(model_path, map_location="cpu"))
     model.eval()
 
     toks = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
     with torch.no_grad():
-        logits = model(**toks).squeeze()
+        logits_leaf, logits_risk = model(**toks)
 
-    best_idx = torch.argmax(logits).item()
-    risk = torch.max(logits).item()
-    label = f"leaf_{best_idx}"
+    best_idx = torch.argmax(logits_leaf).item()
+    risk = logits_risk.item()
+    label = label_encoder.classes_[best_idx]
     return label, round(float(risk), 3)
 
 # ------------------ Main CLI ------------------
