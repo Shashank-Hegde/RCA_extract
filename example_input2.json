@@ -1,0 +1,32 @@
+{
+  "text": "I'm a 32-year-old male from Pune with intense headaches for 2 weeks and lots of stress at work.",
+  "extracted": {
+    "age": 32,
+    "sex": "male",
+    "ethnicity": null,
+    "socioeconomic_status": null,
+    "location": "Pune",
+    "region": "Maharashtra",
+    "past_conditions": null,
+    "surgeries": null,
+    "hospitalisations": null,
+    "chronic_illnesses": null,
+    "medication_history": null,
+    "immunisation_status": null,
+    "allergies": null,
+    "family_history": "migraines",
+    "diet": "home-cooked meals",
+    "physical_activity": "NULL",
+    "sleep_pattern": "disrupted, hard to fall asleep",
+    "alcohol": "NULL",
+    "tobacco": "none",
+    "mental_health": "under a lot of work stress",
+    "work_stress": "high, with tight deadlines",
+    "environmental_exposure": null,
+    "housing": "rented apartment",
+    "clean_water": true,
+    "occupation": "IT professional",
+    "symptom_duration_map": {"headache": "2 weeks"},
+    "symptom_intensity_map": {"headache": "severe"}
+  }
+}
