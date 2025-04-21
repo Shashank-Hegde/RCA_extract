@@ -20,15 +20,15 @@ CANON_KEYS = [
 ]
 
 PROMPT = """
-You are simulating a patient in an online tele​-medicine chat. All patients live in India.
+You are simulating a patient in an online tele‑medicine chat. All patients live in India.
 Return **ONLY** valid JSON.
 
 Schema:
 {{
-  "text": <250​-400​-token first​-person paragraph>,
+  "text": <250‑400‑token first‑person paragraph>,
   "extracted": {{ {kv_pairs} }},
   "label_leaf_id": <ONE of {leaf_ids}>,
-  "risk": <float 0​-1 urgency>
+  "risk": <float 0‑1 urgency>
 }}
 
 Rules:
@@ -46,18 +46,17 @@ def json_complete(j: dict, all_ids: list[str]) -> bool:
 
 def clean_json_response(response_text: str) -> str:
     lines = response_text.strip().splitlines()
-    if lines[0].strip().startswith("```"): lines = lines[1:]
+    if lines and lines[0].strip().startswith("```"): lines = lines[1:]
     if lines and lines[-1].strip().startswith("```"): lines = lines[:-1]
     return "\n".join(lines).strip()
 
 def main(n, onto, out_dir):
     nodes = yaml.safe_load(open(onto))
     all_ids = [node["id"] for node in nodes]
-
-    N_PER_NODE = max(1, n // len(all_ids))
+    N_PER_ID = max(1, n // len(all_ids))
 
     prompt_base = PROMPT.format(
-        kv_pairs=", ".join([f'\"{k}\": <value>' for k in CANON_KEYS]),
+        kv_pairs=", ".join([f'"{k}": <value>' for k in CANON_KEYS]),
         leaf_ids=all_ids
     )
 
@@ -66,11 +65,11 @@ def main(n, onto, out_dir):
     val_f   = open(out_dir/"val.jsonl"  , "w")
     err_f   = open(out_dir/"errors.log", "w")
 
-    pbar = tqdm(enumerate(leaves), total=len(leaves), desc="Generating per ID")
-    for idx, leaf in pbar:
-        pbar.set_description_str(f"Generating [{idx+1}/{len(leaves)}]: {leaf['id']}")
-        for i in range(N_PER_LEAF):
-            print(f"  ▶ Sample {i+1}/{N_PER_LEAF} for leaf_id = {leaf['id']}")
+    pbar = tqdm(enumerate(all_ids), total=len(all_ids), desc="Generating per ID")
+    for idx, node_id in pbar:
+        pbar.set_description_str(f"Generating [{idx+1}/{len(all_ids)}]: {node_id}")
+        for i in range(N_PER_ID):
+            print(f"  ▶ Sample {i+1}/{N_PER_ID} for label_leaf_id = {node_id}")
             for attempt in range(2):
                 try:
                     resp = client.chat.completions.create(
@@ -78,7 +77,7 @@ def main(n, onto, out_dir):
                         temperature=1,
                         messages=[
                             {"role": "system", "content": prompt_base},
-                            {"role": "user", "content": f"Use label_leaf_id = {leaf['id']}"}
+                            {"role": "user", "content": f"Use label_leaf_id = {node_id}"}
                         ]
                     )
                     raw = resp.choices[0].message.content.strip()
@@ -91,7 +90,7 @@ def main(n, onto, out_dir):
                     data["uid"] = uuid.uuid4().hex[:8]
                     f = val_f if random.random() < 0.1 else train_f
                     f.write(json.dumps(data) + "\n")
-                    break  # Success, break retry loop
+                    break
 
                 except Exception as e:
                     err_f.write(f"ID={node_id}, attempt={attempt+1}, error={e}\n")
