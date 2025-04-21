@@ -18,13 +18,13 @@
       asks_for: ["chest_tightness"]
 
 - id: fever_cough_long_severe
-  label: "≥3 weeks & severe"
+  label: "Fever + cough ≥3 weeks & severe"
   parent_id: fever_cough
   followups:
     - q: "Any blood‑streaked sputum?"
       asks_for: ["hemoptysis"]
 
-# ── headache tree  ───────────────────────────
+# ── headache tree ───────────────────────────────────────────
 - id: headache
   label: "Headache"
   parent_id: null
@@ -36,5 +36,79 @@
   label: "Headache + nausea + photophobia"
   parent_id: headache
   followups:
-    - q: "Does light worsen the pain?"
+    - q: "Does bright light worsen the pain?"
       asks_for: ["photophobia"]
+
+- id: headache_tension
+  label: "Headache (band‑like / tension)"
+  parent_id: headache
+  followups:
+    - q: "Does it feel like a tight band around your head?"
+      asks_for: ["pain_character"]
+
+# ── stomach‑pain tree ───────────────────────────────────────
+- id: stomach_pain
+  label: "Stomach / abdominal pain"
+  parent_id: null
+  followups:
+    - q: "Point to where the pain is strongest."
+      asks_for: ["pain_location"]
+
+- id: stomach_pain_upper
+  label: "Upper‑abdomen pain"
+  parent_id: stomach_pain
+  followups:
+    - q: "Does the pain worsen after fatty meals?"
+      asks_for: ["meal_relation"]
+
+- id: stomach_pain_upper_long
+  label: "Upper pain >2 weeks + nausea"
+  parent_id: stomach_pain_upper
+  followups:
+    - q: "Any unintentional weight loss?"
+      asks_for: ["weight_loss"]
+
+# ── chest‑pain tree ─────────────────────────────────────────
+- id: chest_pain
+  label: "Chest pain"
+  parent_id: null
+  followups:
+    - q: "Is the pain sharp, dull, or pressure‑like?"
+      asks_for: ["pain_character"]
+
+- id: chest_pain_exertion
+  label: "Chest pain on exertion"
+  parent_id: chest_pain
+  followups:
+    - q: "Does the pain improve with rest?"
+      asks_for: ["rest_relief"]
+
+# ── skin‑rash tree ──────────────────────────────────────────
+- id: skin_rash
+  label: "Skin rash"
+  parent_id: null
+  followups:
+    - q: "Where on the body is the rash located?"
+      asks_for: ["rash_location"]
+
+- id: skin_rash_itchy
+  label: "Itchy skin rash"
+  parent_id: skin_rash
+  followups:
+    - q: "Does the rash worsen at night?"
+      asks_for: ["itch_timing"]
+
+# ── nausea / vomiting tree ─────────────────────────────────
+- id: nausea
+  label: "Nausea / vomiting"
+  parent_id: null
+  followups:
+    - q: "How many times have you vomited in the last 24 h?"
+      asks_for: ["vomit_count"]
+
+- id: nausea_dehydration
+  label: "Nausea + possible dehydration"
+  parent_id: nausea
+  followups:
+    - q: "Are you able to keep fluids down?"
+      asks_for: ["oral_intake"]
