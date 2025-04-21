@@ -1,1 +1,40 @@
-#test 1
+# ── fever tree ──────────────────────────────────────────────
+- id: fever
+  label: "Fever"
+  parent_id: null
+  followups:
+    - q: "How high has your temperature been?"
+      asks_for: ["max_temp"]
+    - q: "Have you measured it with a thermometer?"
+      asks_for: ["temp_measured"]
+
+- id: fever_cough
+  label: "Fever with cough"
+  parent_id: fever
+  followups:
+    - q: "Is the cough dry or productive?"
+      asks_for: ["cough_type"]
+    - q: "Any chest tightness when breathing?"
+      asks_for: ["chest_tightness"]
+
+- id: fever_cough_long_severe
+  label: "≥3 weeks & severe"
+  parent_id: fever_cough
+  followups:
+    - q: "Any blood‑streaked sputum?"
+      asks_for: ["hemoptysis"]
+
+# ── headache tree  ───────────────────────────
+- id: headache
+  label: "Headache"
+  parent_id: null
+  followups:
+    - q: "Where exactly is the pain located?"
+      asks_for: ["pain_location"]
+
+- id: headache_migraine
+  label: "Headache + nausea + photophobia"
+  parent_id: headache
+  followups:
+    - q: "Does light worsen the pain?"
+      asks_for: ["photophobia"]
