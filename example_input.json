@@ -14,6 +14,7 @@
     "work_stress": "high due to frequent deadlines",
     "housing": "rented apartment, clean",
     "clean_water": true,
+    "allergies": "dust",
     "occupation": "software engineer",
     "symptom_duration_map": {
       "abdominal pain": "3 weeks"
