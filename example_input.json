@@ -1,26 +1,20 @@
 {
-  "text": "Hello, I'm Rajesh Kumar, a 45-year-old man living in a suburban area of Pune. I've been experiencing persistent upper abdominal pain for the past three weeks. The pain started as a mild discomfort but has gradually become more noticeable and bothersome. It's mostly dull and located just under my ribs on the right side. I am concerned because the pain hasn't gone away with over-the-counter antacids that I've tried, which usually help with my occasional acidity. I haven't had any previous surgeries or significant hospitalizations. My medical history includes treatment for H. pylori infection a couple of years ago, but otherwise, I am relatively healthy. I take diet seriously and usually eat home-cooked meals with an emphasis on vegetables and legumes, but I might indulge in spicy street food once a week or so. I work as a software engineer, which means long hours at a desk, though I try to break it up with short walks. I don’t smoke, but I do enjoy a couple of drinks on the weekends. My family doesn't have a significant history of gastrointestinal issues, though both my parents have hypertension. With frequent work deadlines and a couple of sleepless nights recently, I've realized that my stress levels have been a bit high. I do ensure a minimum of six to seven hours of sleep on average, though it can sometimes be interrupted. Our household has clean drinking water, and I live in a rented apartment with my wife, which is clean and well-maintained. Given the persistence of this pain, I am getting quite anxious and unsure if this could be something serious like an ulcer or another issue that might require further investigation.",
+  "text": "I'm a 52-year-old man from Patna. I've had a cough and fever for over 4 weeks now. The fever gets worse at night, and my cough has started to bring up blood-streaked sputum. I'm feeling very weak.",
   "extracted": {
-    "age": 45,
+    "age": 52,
     "sex": "male",
-    "location": "Pune",
-    "past_conditions": "H. pylori infection",
-    "diet": "home-cooked meals, occasional spicy street food",
-    "physical_activity": "short walks",
-    "sleep_pattern": "six to seven hours on average, sometimes interrupted",
-    "alcohol": "couple of drinks on weekends",
-    "tobacco": "no",
-    "mental_health": "anxious due to persistent pain",
-    "work_stress": "high due to frequent deadlines",
-    "housing": "rented apartment, clean",
-    "clean_water": true,
-    "allergies": "dust",
-    "occupation": "software engineer",
-    "symptom_duration_map": {
-      "abdominal pain": "3 weeks"
-    },
-    "symptom_intensity_map": {
-      "abdominal pain": "dull and noticeable"
-    }
+    "location": "Patna",
+    "region": "Bihar",
+    "symptom_duration_map": {"fever": "4 weeks", "cough": "4 weeks"},
+    "symptom_intensity_map": {"fever": "high", "cough": "severe"},
+    "cough_type": "productive",
+    "chest_tightness": "yes",
+    "hemoptysis": "yes",
+    "diet": "normal meals",
+    "housing": "shared room",
+    "alcohol": "no",
+    "tobacco": "frequent smoker",
+    "clean_water": false,
+    "occupation": "security guard"
   }
 }
