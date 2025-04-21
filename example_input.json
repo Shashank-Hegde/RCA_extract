@@ -1,20 +1,19 @@
 {
-  "text": "I'm a 52-year-old man from Patna. I've had a cough and fever for over 4 weeks now. The fever gets worse at night, and my cough has started to bring up blood-streaked sputum. I'm feeling very weak.",
+  "text": "I’m a 29-year-old female from Chennai. I've had pulsating headaches with nausea and light sensitivity for the last week. I have a history of migraines, and this one feels the same.",
   "extracted": {
-    "age": 52,
-    "sex": "male",
-    "location": "Patna",
-    "region": "Bihar",
-    "symptom_duration_map": {"fever": "4 weeks", "cough": "4 weeks"},
-    "symptom_intensity_map": {"fever": "high", "cough": "severe"},
-    "cough_type": "productive",
-    "chest_tightness": "yes",
-    "hemoptysis": "yes",
-    "diet": "normal meals",
-    "housing": "shared room",
-    "alcohol": "no",
-    "tobacco": "frequent smoker",
-    "clean_water": false,
-    "occupation": "security guard"
+    "age": 29,
+    "sex": "female",
+    "location": "Chennai",
+    "region": "Tamil Nadu",
+    "symptom_duration_map": {"headache": "1 week"},
+    "symptom_intensity_map": {"headache": "severe"},
+    "pain_location": "right temple",
+    "photophobia": "yes",
+    "family_history": "mother has migraines",
+    "mental_health": "stressed",
+    "diet": "regular",
+    "clean_water": true,
+    "housing": "apartment",
+    "occupation": "graphic designer"
   }
 }
