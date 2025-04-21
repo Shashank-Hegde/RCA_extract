@@ -67,9 +67,10 @@ def main(n, onto, out_dir):
     err_f   = open(out_dir/"errors.log", "w")
 
     pbar = tqdm(enumerate(all_ids), total=len(all_ids), desc="Generating per ID")
-    for idx, node_id in pbar:
-        pbar.set_description_str(f"Generating [{idx+1}/{len(all_ids)}]: {node_id}")
-        for i in range(N_PER_NODE):
+    for idx, leaf in pbar:
+        pbar.set_description_str(f"Generating [{idx+1}/{len(leaf_ids)}]: {leaf}")
+        for i in range(N_PER_LEAF):
+            print(f"  ▶ Sample {i+1}/{N_PER_LEAF} for leaf_id = {leaf}")
             for attempt in range(2):
                 try:
                     resp = client.chat.completions.create(
