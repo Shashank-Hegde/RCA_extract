@@ -13,6 +13,13 @@ from transformers import AutoTokenizer, AutoModel
 from spacy.util import filter_spans
 from spacy.tokens import DocBin
 
+from sklearn.preprocessing import LabelEncoder
+
+# Load label encoder
+label_encoder = torch.load("models/label_encoder.pt")
+n_labels = len(label_encoder.classes_)
+model = SymptomNet(encoder, n_labels)
+
 warnings.filterwarnings("ignore")
 
 CANON_KEYS = [
@@ -61,7 +68,7 @@ class SymptomNet(torch.nn.Module):
 def predict_leaf(text, model_path):
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
     encoder = AutoModel.from_pretrained("distilbert-base-uncased")
-    model = SymptomNet(encoder)
+    model = SymptomNet(encoder, n_labels=20)  # ← use same label count as training
     model.load_state_dict(torch.load(model_path, map_location="cpu"))
     model.eval()
 
