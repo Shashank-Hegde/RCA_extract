@@ -70,7 +70,9 @@ def main(n, onto, out_dir):
     val_f   = open(out_dir/"val.jsonl"  , "w")
     err_f   = open(out_dir/"errors.log", "w")
 
-    for leaf in tqdm(leaf_ids, desc="Generating per leaf"):
+    pbar = tqdm(enumerate(leaf_ids), total=len(leaf_ids), desc="Generating per leaf")
+    for idx, leaf in pbar:
+        pbar.set_description_str(f"Generating [{idx+1}/{len(leaf_ids)}]: {leaf}")
         for i in range(N_PER_LEAF):
             for attempt in range(2):
                 try:
