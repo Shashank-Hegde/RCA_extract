@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 """
-Generate long‑form synthetic patient messages (GPT‑4o‑mini) and guarantee
-every canonical key appears in "extracted".
+Generate long-form synthetic patient messages using GPT-4o.
+Ensures balanced distribution across all leaf IDs in ontology.
 
 Usage:
   export OPENAI_API_KEY=sk-...
-  python pipeline/02_gen_synthetic.py --n 50000 \
-         --onto ontology/v1.yaml --out data/synth
+  python pipeline/02_gen_synthetic.py --n 1000 \
+         --onto ontology/v1.yaml --out_dir data/synth_balanced
 """
-import os, json, uuid, yaml, argparse, pathlib, random
+
+import os, json, uuid, yaml, argparse, pathlib
 from tqdm import tqdm
 from openai import OpenAI
+import random
+
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-client = OpenAI()
 CANON_KEYS = [
  "age","sex","ethnicity","socioeconomic_status","location","region",
  "past_conditions","surgeries","hospitalisations","chronic_illnesses",
@@ -53,6 +55,9 @@ def main(n, onto, out_dir):
               if not any(c["parent_id"] == n["id"] for c in yaml.safe_load(open(onto)))]
     leaf_ids = [l["id"] for l in leaves]
 
+    # Calculate samples per leaf
+    N_PER_LEAF = max(1, n // len(leaf_ids))
+
     prompt_base = PROMPT.format(
         kv_pairs=", ".join([f'"{k}": <value>' for k in CANON_KEYS]),
         leaf_ids=leaf_ids
@@ -62,35 +67,36 @@ def main(n, onto, out_dir):
     train_f = open(out_dir/"train.jsonl", "w")
     val_f   = open(out_dir/"val.jsonl"  , "w")
 
-    for i in tqdm(range(n), desc="GPT‑synth"):
-        leaf = random.choice(leaf_ids)
-        try:
-            resp = client.chat.completions.create(
-              model="gpt-4o",
-              temperature=1,
-              messages=[
-              {"role": "system", "content": prompt_base},
-              {"role": "user", "content": f"Use label_leaf_id = {leaf}"}
-          ]
-        )
-            content = resp.choices[0].message.content.strip()
-            data = json.loads(content)
-            if not json_complete(data, leaf_ids):
-                raise ValueError("missing keys")
+    for leaf in tqdm(leaf_ids, desc="Generating per leaf"):
+        for i in range(N_PER_LEAF):
+            try:
+                resp = client.chat.completions.create(
+                    model="gpt-4o",
+                    temperature=1,
+                    messages=[
+                        {"role": "system", "content": prompt_base},
+                        {"role": "user", "content": f"Use label_leaf_id = {leaf}"}
+                    ]
+                )
+                content = resp.choices[0].message.content.strip()
+                data = json.loads(content)
 
-            data["uid"] = uuid.uuid4().hex[:8]
-            f = val_f if i % 10 == 0 else train_f
-            f.write(json.dumps(data) + "\n")
+                if not json_complete(data, leaf_ids):
+                    raise ValueError("missing keys")
 
-        except Exception as e:
-            tqdm.write(f"[WARN] line {i} skipped: {e}")
-            continue
+                data["uid"] = uuid.uuid4().hex[:8]
+                f = val_f if random.random() < 0.1 else train_f
+                f.write(json.dumps(data) + "\n")
 
-    print("✅ synthetic JSONL saved →", out_dir)
+            except Exception as e:
+                tqdm.write(f"[WARN] {leaf} sample skipped: {e}")
+                continue
+
+    print("✅ Balanced synthetic data saved to:", out_dir)
 
 if __name__ == "__main__":
     a = argparse.ArgumentParser()
-    a.add_argument("--n", type=int, default=500)
+    a.add_argument("--n", type=int, default=1000, help="total number of samples")
     a.add_argument("--onto", default="ontology/v1.yaml")
-    a.add_argument("--out_dir", default="data/synth")
+    a.add_argument("--out_dir", default="data/synth_balanced")
     main(**vars(a.parse_args()))
