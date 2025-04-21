@@ -4,7 +4,14 @@ Predict + list which CANON keys are still null → ask these as follow‑ups.
 """
 import yaml, torch, argparse, json
 from transformers import AutoModel, AutoTokenizer
-from symptom_net.extractor import extract, CANON_KEYS
+CANON_KEYS = [
+ "age","sex","ethnicity","socioeconomic_status","location","region",
+ "past_conditions","surgeries","hospitalisations","chronic_illnesses",
+ "medication_history","immunisation_status","allergies","family_history",
+ "diet","physical_activity","sleep_pattern","alcohol","tobacco",
+ "mental_health","work_stress","environmental_exposure","housing","clean_water",
+ "occupation","symptom_duration_map","symptom_intensity_map"
+]
 
 def load(ckpt, enc, num_leaf):
     enc_m = AutoModel.from_pretrained(enc)
