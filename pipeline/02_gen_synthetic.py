@@ -10,9 +10,10 @@ Usage:
 """
 import os, json, uuid, yaml, argparse, pathlib, random
 from tqdm import tqdm
-import openai
+from openai import OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+client = OpenAI()
 CANON_KEYS = [
  "age","sex","ethnicity","socioeconomic_status","location","region",
  "past_conditions","surgeries","hospitalisations","chronic_illnesses",
@@ -64,14 +65,14 @@ def main(n, onto, out_dir):
     for i in tqdm(range(n), desc="GPT‑synth"):
         leaf = random.choice(leaf_ids)
         try:
-            resp = openai.ChatCompletion.create(
-                model="gpt-4o-mini",
-                temperature=1,
-                messages=[
-                    {"role": "system", "content": prompt_base},
-                    {"role": "user", "content": f"Use label_leaf_id = {leaf}"}
-                ]
-            )
+            resp = client.chat.completions.create(
+              model="gpt-4o",
+              temperature=1,
+              messages=[
+              {"role": "system", "content": prompt_base},
+              {"role": "user", "content": f"Use label_leaf_id = {leaf}"}
+          ]
+        )
             content = resp.choices[0].message.content.strip()
             data = json.loads(content)
             if not json_complete(data, leaf_ids):
