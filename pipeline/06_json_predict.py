@@ -61,3 +61,5 @@ if __name__ == "__main__":
     result = predict(inp["extracted"])
     result["extracted"] = inp["extracted"]     # echo back
     print(json.dumps(result, indent=2))
+    fit_encoder("data/synth_balanced/train.jsonl", "models/feature_encoder.pkl")
+
