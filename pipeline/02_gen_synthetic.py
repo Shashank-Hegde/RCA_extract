@@ -66,11 +66,11 @@ def main(n, onto, out_dir):
     val_f   = open(out_dir/"val.jsonl"  , "w")
     err_f   = open(out_dir/"errors.log", "w")
 
-    pbar = tqdm(enumerate(all_ids), total=len(all_ids), desc="Generating per ID")
+    pbar = tqdm(enumerate(leaves), total=len(leaves), desc="Generating per ID")
     for idx, leaf in pbar:
-        pbar.set_description_str(f"Generating [{idx+1}/{len(leaf_ids)}]: {leaf}")
+        pbar.set_description_str(f"Generating [{idx+1}/{len(leaves)}]: {leaf['id']}")
         for i in range(N_PER_LEAF):
-            print(f"  ▶ Sample {i+1}/{N_PER_LEAF} for leaf_id = {leaf}")
+            print(f"  ▶ Sample {i+1}/{N_PER_LEAF} for leaf_id = {leaf['id']}")
             for attempt in range(2):
                 try:
                     resp = client.chat.completions.create(
@@ -78,7 +78,7 @@ def main(n, onto, out_dir):
                         temperature=1,
                         messages=[
                             {"role": "system", "content": prompt_base},
-                            {"role": "user", "content": f"Use label_leaf_id = {node_id}"}
+                            {"role": "user", "content": f"Use label_leaf_id = {leaf['id']}"}
                         ]
                     )
                     raw = resp.choices[0].message.content.strip()
