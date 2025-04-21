@@ -1,64 +1,58 @@
 #!/usr/bin/env python
 """
-Finetune spaCy transformer NER so it emits every CANON_KEY label.
+03_train_extractor.py
+---------------------
+Finetune a spaCy transformer NER so it emits every CANON_KEY label.
 
-Usage:
-  python 03_train_extractor.py \
-          --train data/synth/train.jsonl \
-          --val   data/synth/val.jsonl
+Usage (CPU):
+  python pipeline/03_train_extractor.py \
+         --train data/synth/train.jsonl \
+         --val   data/synth/val.jsonl
+
+Usage (GPU 0 ‑ requires cupy):
+  python pipeline/03_train_extractor.py \
+         --train ... --val ... --gpu 0
 """
-
-import sys, os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # 🔥 this is key
-
-import subprocess
-import json, spacy, argparse, pathlib
+from __future__ import annotations
+import json, argparse, pathlib, subprocess, textwrap
+import spacy
 from spacy.tokens import DocBin
 from spacy.util import filter_spans
+
+# --------- canonical keys (edit once) ------------------------
 CANON_KEYS = [
-    "age", "sex", "ethnicity", "socioeconomic_status", "location", "region",
-    "past_conditions", "surgeries", "hospitalisations", "chronic_illnesses",
-    "medication_history", "immunisation_status", "allergies", "family_history",
-    "diet", "physical_activity", "sleep_pattern", "alcohol", "tobacco",
-    "mental_health", "work_stress", "environmental_exposure", "housing", "clean_water",
-    "occupation", "symptom_duration_map", "symptom_intensity_map"
+ "age","sex","ethnicity","socioeconomic_status","location","region",
+ "past_conditions","surgeries","hospitalisations","chronic_illnesses",
+ "medication_history","immunisation_status","allergies","family_history",
+ "diet","physical_activity","sleep_pattern","alcohol","tobacco",
+ "mental_health","work_stress","environmental_exposure","housing","clean_water",
+ "occupation"
 ]
+LABELS = [k.upper() for k in CANON_KEYS]
 
-
-LABELS = [k.upper() for k in CANON_KEYS if k not in
-          ("symptom_duration_map","symptom_intensity_map")]
-
-def to_docbin(js_path, nlp):
+# --------- helper: JSONL → DocBin ----------------------------
+def make_docbin(jsonl: str, nlp) -> DocBin:
     db = DocBin()
-    for line in open(js_path):
-        j = json.loads(line)
-        doc = nlp.make_doc(j["text"])
-        ents = []
-        for k, v in j["extracted"].items():
-            if k not in CANON_KEYS or v in (None, "", []): continue
-            if isinstance(v, dict): continue
-            val = str(v)
-            start = j["text"].lower().find(val.lower())
-            if start >= 0:
-                span = doc.char_span(start, start + len(val), label=k.upper())
-                if span: ents.append(span)
-        doc.ents = filter_spans(ents)
+    for line in open(jsonl):
+        rec = json.loads(line)
+        doc = nlp.make_doc(rec["text"])
+        spans=[]
+        for k,v in rec["extracted"].items():
+            if k not in CANON_KEYS or v in (None,"",[]): continue
+            val=str(v)
+            start=rec["text"].lower().find(val.lower())
+            if start>=0:
+                span=doc.char_span(start,start+len(val),label=k.upper())
+                if span: spans.append(span)
+        doc.ents = filter_spans(spans)
         db.add(doc)
     return db
 
-def main(train_jsonl, val_jsonl, out_dir="models/extractor_ner"):
-    nlp = spacy.blank("en"); ner = nlp.add_pipe("ner")
-    for lbl in LABELS: ner.add_label(lbl)
-    db_train = to_docbin(train_jsonl, nlp); db_train.to_disk("train.spacy")
-    db_val   = to_docbin(val_jsonl, nlp);  db_val.to_disk("val.spacy")
-
-    cfg = (pathlib.Path(out_dir) / "config.cfg")
-    cfg.parent.mkdir(parents=True, exist_ok=True)
-    
-    cfg.write_text("""
+# --------- write minimal config.cfg --------------------------
+CFG_TEMPLATE = textwrap.dedent("""
 [nlp]
 lang = "en"
-pipeline = ["tok2vec", "ner"]
+pipeline = ["tok2vec","ner"]
 
 [components]
 
@@ -71,24 +65,38 @@ name = "roberta-base"
 
 [components.ner]
 factory = "ner"
+""")
 
-[paths]
-train = "train.spacy"
-dev = "val.spacy"
-""".strip())
-    
-    subprocess.run([
-    "python","-m","spacy","train", str(cfg),
-    "--output", str(out_dir),
-    "--paths.train","train.spacy",
-    "--paths.dev","val.spacy",
-    "--gpu-id","-1"               # ← CPU
-], check=True)
+def write_config(path: pathlib.Path):
+    path.write_text(CFG_TEMPLATE.strip())
 
+# --------- main ----------------------------------------------
+def main(train_jsonl:str, val_jsonl:str, out_dir="models/extractor_ner", gpu:int=-1):
+    out = pathlib.Path(out_dir); out.mkdir(parents=True, exist_ok=True)
+
+    nlp = spacy.blank("en"); ner = nlp.add_pipe("ner")
+    for lbl in LABELS: ner.add_label(lbl)
+
+    make_docbin(train_jsonl, nlp).to_disk("train.spacy")
+    make_docbin(val_jsonl,   nlp).to_disk("val.spacy")
+
+    cfg = out/"config.cfg"; write_config(cfg)
+
+    cmd = [
+        "python","-m","spacy","train", str(cfg),
+        "--output", str(out),
+        "--paths.train","train.spacy",
+        "--paths.dev","val.spacy",
+        "--gpu-id", str(gpu)
+    ]
+    print("ℹ Running:", " ".join(cmd))
+    subprocess.run(cmd, check=True)
 
 if __name__ == "__main__":
-    a = argparse.ArgumentParser()
-    a.add_argument("--train_jsonl", required=True)
-    a.add_argument("--val_jsonl", required=True)
-
-    main(**vars(a.parse_args()))
+    p = argparse.ArgumentParser()
+    p.add_argument("--train", required=True, help="JSONL with synthetic or real training data")
+    p.add_argument("--val",   required=True, help="JSONL validation data")
+    p.add_argument("--out",   default="models/extractor_ner")
+    p.add_argument("--gpu",   type=int, default=-1, help="-1 for CPU, 0‑n for specific GPU")
+    args = p.parse_args()
+    main(args.train, args.val, args.out, args.gpu)
