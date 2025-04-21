@@ -20,15 +20,15 @@ CANON_KEYS = [
 ]
 
 PROMPT = """
-You are simulating a patient in an online tele‑medicine chat. All patients live in India.
+You are simulating a patient in an online tele​-medicine chat. All patients live in India.
 Return **ONLY** valid JSON.
 
 Schema:
 {{
-  "text": <250‑400‑token first‑person paragraph>,
+  "text": <250​-400​-token first​-person paragraph>,
   "extracted": {{ {kv_pairs} }},
   "label_leaf_id": <ONE of {leaf_ids}>,
-  "risk": <float 0‑1 urgency>
+  "risk": <float 0​-1 urgency>
 }}
 
 Rules:
