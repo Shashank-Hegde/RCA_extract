@@ -7,6 +7,10 @@ Usage:
           --train data/synth/train.jsonl \
           --val   data/synth/val.jsonl
 """
+
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # 🔥 this is key
+
 import json, spacy, argparse, pathlib
 from spacy.tokens import DocBin
 from symptom_net.constants import CANON_KEYS     # short helper file
