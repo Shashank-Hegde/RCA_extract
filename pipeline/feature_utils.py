@@ -20,7 +20,7 @@ CANON_KEYS = [
 def _duration_to_days(text):
     """ crude converter: '3 weeks'→21, '2 days'→2, else 0 """
     if text is None: return 0
-    m = re.search(r"(\\d+)\\s*(day|week|month|year)", text)
+    m = re.search(r"(\d+)\s*(day|week|month|year)", text)
     if not m: return 0
     n = int(m.group(1)); unit = m.group(2)
     return n*365 if unit.startswith("year") else n*30 if unit.startswith("month") else n*7 if unit.startswith("week") else n
@@ -42,11 +42,18 @@ def extracted_to_dict(extracted):
 
         # symptoms
         elif k == "symptom_duration_map":
-            for sym, dur in (v or {}).items():
-                d[f"dura_{sym}"] = _duration_to_days(dur)
+            if isinstance(v, dict):
+                for sym, dur in v.items():
+                    d[f"duration__{sym}"] = _duration_to_days(dur)
+            elif isinstance(v, str):
+                d["duration__freeform"] = _duration_to_days(v)
+
         elif k == "symptom_intensity_map":
-            for sym, inten in (v or {}).items():
-                d[f"inten_{sym}={inten.lower()}"] = 1.0
+            if isinstance(v, dict):
+                for sym, inten in v.items():
+                    d[f"inten_{sym}={inten.lower()}"] = 1.0
+            elif isinstance(v, str):
+                d["inten__freeform"] = 1.0
 
         # free‑text categorical
         else:
