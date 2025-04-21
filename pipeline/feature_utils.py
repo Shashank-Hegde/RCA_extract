@@ -51,13 +51,15 @@ def extracted_to_dict(extracted):
             elif isinstance(v, str):
                 d["dura_freeform"] = _duration_to_days(v)
 
-        # symptom intensity
-        elif k == "symptom_intensity_map":
+    
+        # Inside extracted_to_dict()
+        elif k == "symptom_duration_map":
             if isinstance(v, dict):
-                for sym, inten in v.items():
-                    d[f"inten_{sym}={inten.lower()}"] = 1.0
+                for sym, dur in v.items():
+                    d[f"dura_{sym}"] = _duration_to_days(dur)
             elif isinstance(v, str):
-                d[f"inten_freeform={v.lower()}"] = 1.0
+                d["duration__freeform"] = v
+
 
         # free-text fallback
         else:
