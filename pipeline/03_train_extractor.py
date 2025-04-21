@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 import json, spacy, argparse, pathlib
 from spacy.tokens import DocBin
+from spacy.util import filter_spans
 CANON_KEYS = [
     "age", "sex", "ethnicity", "socioeconomic_status", "location", "region",
     "past_conditions", "surgeries", "hospitalisations", "chronic_illnesses",
@@ -40,7 +41,7 @@ def to_docbin(js_path, nlp):
             if start >= 0:
                 span = doc.char_span(start, start + len(val), label=k.upper())
                 if span: ents.append(span)
-        doc.ents = ents
+        doc.ents = filter_spans(ents)
         db.add(doc)
     return db
 
