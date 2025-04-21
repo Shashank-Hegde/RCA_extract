@@ -6,7 +6,7 @@ import sys, os, json, torch, argparse
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import feature_utils
-from train_hybrid import SymptomNetHybrid, ENCODER_NAME
+from train_hybrid2 import SymptomNetHybrid, ENCODER_NAME
 from transformers import AutoTokenizer
 from sklearn.preprocessing import LabelEncoder
 
