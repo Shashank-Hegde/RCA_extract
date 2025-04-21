@@ -11,6 +11,7 @@ Usage:
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # 🔥 this is key
 
+import subprocess
 import json, spacy, argparse, pathlib
 from spacy.tokens import DocBin
 from spacy.util import filter_spans
@@ -59,13 +60,15 @@ def main(train_jsonl, val_jsonl, out_dir="models/extractor_ner"):
         "[components.tok2vec]\nfactory=\"tok2vec\"\n"
         "[components.tok2vec.model]\n@architectures=\"spacy.Tok2VecTransformer.v3\"\nname=\"roberta-base\""
     )
-    import subprocess
+    
     subprocess.run([
-        "python","-m","spacy","train", str(cfg),
-        "--output", str(out_dir),
-        "--paths.train","train.spacy",
-        "--paths.dev","val.spacy",
-        "--gpu-id","0"], check=True)
+    "python","-m","spacy","train", str(cfg),
+    "--output", str(out_dir),
+    "--paths.train","train.spacy",
+    "--paths.dev","val.spacy",
+    "--gpu-id","-1"               # ← CPU
+], check=True)
+
 
 if __name__ == "__main__":
     a = argparse.ArgumentParser()
