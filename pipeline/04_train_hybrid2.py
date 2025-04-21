@@ -7,7 +7,8 @@ import json, torch, argparse
 from torch.utils.data import Dataset, DataLoader
 from transformers import AutoTokenizer, AutoModel
 from sklearn.preprocessing import LabelEncoder
-from pipeline.feature_utils import transform
+from feature_utils import transform
+
 
 ENCODER_NAME = "bert-base-uncased"   # bigger, better accuracy
 HIDDEN = 256
