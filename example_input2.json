@@ -1,23 +1,20 @@
 {
-  "text": "Hi, I'm a 27-year-old woman from Delhi. I've had a high fever for the past 3 days, feeling extremely weak and my temperature reached 102.5°F. I checked with a digital thermometer. I have no past serious illness.",
+  "text": "I'm a 52-year-old man from Patna. I've had a cough and fever for over 4 weeks now. The fever gets worse at night, and my cough has started to bring up blood-streaked sputum. I'm feeling very weak.",
   "extracted": {
-    "age": 27,
-    "sex": "female",
-    "location": "Delhi",
-    "region": "Delhi NCR",
-    "symptom_duration_map": {"fever": "3 days"},
-    "symptom_intensity_map": {"fever": "high"},
-    "medication_history": "paracetamol",
-    "temp_measured": "yes",
-    "max_temp": "102.5°F",
-    "mental_health": "mildly anxious",
-    "diet": "regular Indian meals",
-    "physical_activity": "low",
-    "sleep_pattern": "restless due to fever",
+    "age": 52,
+    "sex": "male",
+    "location": "Patna",
+    "region": "Bihar",
+    "symptom_duration_map": {"fever": "4 weeks", "cough": "4 weeks"},
+    "symptom_intensity_map": {"fever": "high", "cough": "severe"},
+    "cough_type": "productive",
+    "chest_tightness": "yes",
+    "hemoptysis": "yes",
+    "diet": "normal meals",
+    "housing": "shared room",
     "alcohol": "no",
-    "tobacco": "no",
-    "clean_water": true,
-    "housing": "rented apartment",
-    "occupation": "teacher"
+    "tobacco": "frequent smoker",
+    "clean_water": false,
+    "occupation": "security guard"
   }
 }
